@@ -42,6 +42,18 @@ public class Person extends Object{
 		this.friends = friends;
 	}
 
+	public Person(Object name, Object title, Object sex, Object age,
+			Object salary, Object color, Object friends) {
+		super();
+		this.name = (String) name;
+		this.title = (String) title;
+		this.sex = (boolean) sex;
+		this.age = (int) age;
+		this.salary = (double) salary;
+		this.color = (COLOR) color;
+		this.friends = (String[]) friends;
+	}
+	
 	public boolean isSex() {
 		return sex;
 	}
