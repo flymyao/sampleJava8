@@ -1,7 +1,12 @@
 package com.britesnow.j8.test.yao;
 
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
@@ -40,5 +45,43 @@ public class FunctionTest {
 	    System.out.println("judge if predicate || predicate1 is true: "+predicate.or(predicate1).test(1));
 	    System.out.println("judge if t>=0 and 2.equal(2): "+Predicate.isEqual(2).test(2));
 	    System.out.println("judge if t>=0 and 2.equal(1): "+Predicate.isEqual(2).test(1));
+	}
+	
+	@Test
+	public void testSupplier(){
+	    Supplier<Integer> supplier = () -> { return new Integer(-1);};
+	    Supplier<Integer> supplier1 = () -> { return new Integer(1);};
+	    System.out.println("Supplier begin");
+	    System.out.println(supplier.get() +":"+ supplier1.get());
+	}
+	
+	@Test
+	public void testBiFunction(){
+		BiFunction<Integer,Double,Double> binaryOperator = (a, b) -> { return a + b;};
+	    System.out.println("BinaryOperator begin");
+	    System.out.println(binaryOperator.apply(1, 2.1));
+	}
+	
+	@Test
+	public void testBinaryOperator(){
+	    BinaryOperator<Integer> binaryOperator = (a, b) -> { return a + b;};
+	    System.out.println("BinaryOperator begin");
+	    System.out.println(binaryOperator.apply(1, 2));
+	}
+	
+	@Test
+	public void testTwoParams(){
+	    BiFunction<Integer, String, Boolean> biFunction = (a, b) -> { return a + Integer.valueOf(b) > 0 ? true : false;};
+	    System.out.println("BiFunction begin");
+	    System.out.println(biFunction.apply(-1, "2"));
+	    
+	    BiConsumer<Integer, String> biConsumer = (a, b) -> {System.out.println(a + b);};
+	    BiConsumer<Integer, String> biConsumer1 = (a, b) -> {System.out.println(a - Integer.parseInt(b));};
+        System.out.println("BiConsumer begin");
+        biConsumer.andThen(biConsumer1).accept(1, "2");
+
+        BiPredicate<Integer, String> biPredicate = (a, b) -> {return a < Integer.valueOf(b) ? true : false;};
+        System.out.println("BiPredicate begin");
+        System.out.println(biPredicate.test(1, "2"));
 	}
 }
