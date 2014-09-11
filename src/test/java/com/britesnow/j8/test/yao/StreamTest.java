@@ -45,7 +45,7 @@ public class StreamTest {
 	 */
 	private void collectMethod(List<Person> persons){
 		List<Person> personcollectone = persons.stream().collect(() -> new ArrayList<>(),
-                (list, item) -> {if(!item.isSex()){list.add(item);}},
+                (list, item) -> {if(!item.getSex()){list.add(item);}},
                 (list1, list2) -> list1.addAll(list2));
 		personcollectone.stream().forEach(System.out::println);
 		
@@ -71,13 +71,13 @@ public class StreamTest {
 	}
 
 	private void reducingMethod(List<Person> persons){
-		Map reducingPerson = persons.stream().collect( Collectors.groupingBy(Person::isSex,Collectors.reducing(0, Person::getAge, Integer::sum)));
+		Map reducingPerson = persons.stream().collect( Collectors.groupingBy(Person::getSex,Collectors.reducing(0, Person::getAge, Integer::sum)));
 		System.out.println(reducingPerson);
 		
 	}
 	
 	private void groupingByMethod(List<Person> persons){
-		Map<Person.COLOR, List<Person>> PersonByColor = persons.stream().filter(p -> p.isSex()).collect(groupingBy(Person::getColor));
+		Map<Person.COLOR, List<Person>> PersonByColor = persons.stream().filter(p -> p.getSex()).collect(groupingBy(Person::getColor));
 		System.out.println("PersonByColor:"+PersonByColor+"\n");
 	}
 	

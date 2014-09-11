@@ -54,7 +54,7 @@ public class Person extends Object{
 		this.friends = (String[]) friends;
 	}
 	
-	public boolean isSex() {
+	public boolean getSex() {
 		return sex;
 	}
 
