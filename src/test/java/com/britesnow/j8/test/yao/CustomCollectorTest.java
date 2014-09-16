@@ -2,7 +2,6 @@ package com.britesnow.j8.test.yao;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +9,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,8 +43,18 @@ public class CustomCollectorTest {
 		List personPropertyList = persons.stream().collect(CustomCollector.propertyToList(Person::getTitle));
 		System.out.println("personPropertyList: " + personPropertyList);
 		
-		List personPropertySet = persons.stream().collect(CustomCollector.propertyToList(Person::getTitle));
+		List personPropertySalaryList = persons.stream().collect(CustomCollector.propertyToList(Person::getSalary));
+		System.out.println("personPropertySalaryList: " + personPropertySalaryList);
+		
+		Set personPropertySet = persons.stream().collect(CustomCollector.propertyToSet(Person::getTitle));
 		System.out.println("personPropertySet: " + personPropertySet);
+		
+		Integer sumAge = persons.stream().collect(CustomCollector.sumInteger(Person::getAge));
+		System.out.println("sumAge: " + sumAge);
+
+		Double sumSalary = persons.stream().collect(CustomCollector.sumDouble(Person::getSalary));
+		System.out.println("sumSalary: " + sumSalary);
+		
 	}
 	
 	/**
@@ -60,6 +71,9 @@ public class CustomCollectorTest {
 	 */
 	static class CustomCollector<T, A, R> implements Collector<T, A, R> {
 
+		
+		static final Set<Collector.Characteristics> CH_NOID = Collections.emptySet();
+		
 		private final Supplier<A> supplier;
         private final BiConsumer<A, T> accumulator;
         private final BinaryOperator<A> combiner;
@@ -69,16 +83,24 @@ public class CustomCollectorTest {
         private static <I, R> Function<I, R> castingIdentity() {
             return i -> (R) i;
         }
-
+        
+        static double computeFinalSum(double[] summands) {
+        	return summands[0];
+        }
+        
 		public CustomCollector(Supplier<A> supplier, BiConsumer<A, T> accumulator, BinaryOperator<A> combiner) {
+			this(supplier, accumulator, combiner, castingIdentity());
+		}
+
+		public CustomCollector(Supplier<A> supplier, BiConsumer<A, T> accumulator, BinaryOperator<A> combiner, Function<A, R> finisher) {
 			super();
 			this.supplier = supplier;
 			this.accumulator = accumulator;
 			this.combiner = combiner;
-			this.finisher = castingIdentity();
-			this.characteristics = Collections.unmodifiableSet(EnumSet.of(Collector.Characteristics.IDENTITY_FINISH));
+			this.finisher = finisher;
+			this.characteristics = CH_NOID;
 		}
-
+		
 		@Override
 		public Supplier supplier() {
 			return supplier;
@@ -126,6 +148,20 @@ public class CustomCollectorTest {
 			
 			return new CustomCollector<>((Supplier<Set<R>>) HashSet::new, accumulator,
                        (left, right) -> { left.addAll(right); return left; });
+	    }
+		
+		public static <T> Collector<T, ?, Integer> sumInteger(ToIntFunction<? super T> mapper) {
+			BiConsumer<Integer[],T > accumulator = (value,element) ->  {value[0] += mapper.applyAsInt(element);};
+			BinaryOperator<Integer[]> combiner = (left, right) -> {left[0] += right[0]; return left;};
+			
+			return new CustomCollector<>(() -> {Integer i[] = new Integer[1];i[0] = 0;return i;}, accumulator, combiner,i->i[0]);
+	    }
+		
+		public static <T,R> Collector<T, ?, Double> sumDouble(ToDoubleFunction<? super T> mapper) {
+			BiConsumer<double[],T > accumulator = (value,element) ->  {value[0] += mapper.applyAsDouble(element);};
+			BinaryOperator<double[]> combiner = (left, right) -> {left[0] += right[0]; return left;};
+			
+			return new CustomCollector<>(() -> new double[1], accumulator,combiner, a -> computeFinalSum(a));
 	    }
 	}
 }
