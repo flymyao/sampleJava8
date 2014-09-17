@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
+import com.britesnow.j8.test.yao.bean.Person;
+
 public class StreamTest {
 	
 	

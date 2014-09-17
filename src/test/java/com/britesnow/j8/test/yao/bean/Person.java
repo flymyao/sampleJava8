@@ -1,4 +1,4 @@
-package com.britesnow.j8.test.yao;
+package com.britesnow.j8.test.yao.bean;
 
 import java.util.Arrays;
 
@@ -135,7 +135,7 @@ public class Person extends Object{
 				+ ", friends=" + Arrays.toString(friends) + "]";
 	}
 
-	enum COLOR {  
+	public enum COLOR {  
 		GREEN, YELLOW, RED
 	}
 }
