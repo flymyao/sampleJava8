@@ -79,6 +79,8 @@ public class DateTest {
     
     @Test
     public void colckTest(){
+    	Clock c1 = Clock.systemUTC();
+        System.out.println(c1.millis());
         Clock clock = Clock.systemDefaultZone();
         long millis = clock.millis();
         Instant instant = clock.instant();
@@ -96,5 +98,36 @@ public class DateTest {
         ZoneId zone2 = ZoneId.of("Brazil/East");
         System.out.println(zone1.getRules());
         System.out.println(zone2.getRules());
+    }
+    
+    @Test
+    public void testInstant() {
+        Instant instant1 = Instant.now();
+        System.out.println("Instant: " + instant1);
+        System.out.println("Instant second from the Java epoch of 1970-01-01T00:00:00Z: " + instant1.getEpochSecond());
+        Clock clock1 = Clock.systemUTC();
+        Instant instant2 = Instant.now(clock1);
+        System.out.println("Converts this instant to the number of milliseconds from the epoch of 1970-01-01T00:00:00Z: " + instant2.toEpochMilli());
+        Clock clock2 = Clock.fixed(instant1, ZoneId.systemDefault());
+        Instant instant3 = Instant.now(clock2);
+        System.out.println(instant3.toEpochMilli());
+    }
+    
+    @Test
+    public void testDateTimeFormatter() {
+        Instant instant = Instant.now();
+        LocalDate today = LocalDate.now();
+        System.out.println("today: "+today);
+        LocalDateTime time = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        LocalDateTime time1 = LocalDateTime.now();
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("HH:mm");
+        System.out.println("Time of now1: " + time.format(formatter1));
+        System.out.println("Time of now2: " + time1.format(formatter2));
+        System.out.println("Time of now3: " + time.format(formatter3));
+        System.out.println("Date of now2: " + today.format(formatter2));
+        LocalDateTime d6 = LocalDateTime.parse("2015/12/31 23:59:59", formatter1);
+        System.out.println("Time of appointed: " + formatter1.format(d6));
     }
 }
